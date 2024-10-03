@@ -24,10 +24,11 @@ main (int argc, char **argv) {
 
   
     stepA=connect(fd_connect,(struct sockaddr *) &connect_addr,sizeof(connect_addr));
-    
+    printf("Trying to connect to Majnoun\n");
 
     //Step B: In case step A fails we will start a listen socket 
     if (stepA!=0) {
+        printf("Majnoun appears to be offline, starting mohiohio listening\n");
         int fd_listen,fd_connection;
         struct sockaddr_in listen_addr,connection_addr;
         socklen_t clilen;
