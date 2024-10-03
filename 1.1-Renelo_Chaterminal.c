@@ -12,7 +12,7 @@ int
 main (int argc, char **argv) {
     //The RENELO chaterminal accept only one argument which is the IP address of the second party and should be launched as follows: "RENELO <IP ADDRESS>"
     if (argc!=2)
-        printf("Error arguments: RENELO <IP ADDRESS>");
+        printf("Error arguments: TALFIN <IP ADDRESS>");
 
     //Step A: Trying to connect to the second party. ("ALLO Anyone on the line ?") Now when launching RENELO there are 2 possibilities: the second party will be already live and listening so we should be able to directly connect OR the second party is not live so we will continue with Step B and start a listen socket
     int fd_connect,stepA;
