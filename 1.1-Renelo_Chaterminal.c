@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PORT_NUM 19611
+#define PORT_NUM 12345
 #define MAX_MESS 500
 
 void 
