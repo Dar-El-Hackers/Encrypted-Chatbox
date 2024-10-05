@@ -7,15 +7,31 @@
 #include <unistd.h>
 
 #define PORT_NUM 19611
+#define MAX_MESS 500
+
+void 
+sendMessage(int fd_socket) {
+    char sendMessage[MAX_MESS];
+    fgets(sendMessage,MAX_MESS,stdin);
+    write(fd_socket,sendMessage,MAX_MESS);
+}
+
+void 
+recvMessage(int fd_socket) {
+    char recvMessage[MAX_MESS];
+    read(fd_socket,recvMessage,MAX_MESS);
+    fputs(recvMessage,stdout);
+    
+}
 
 int 
 main (int argc, char **argv) {
-    //The TALFIN chaterminal accept only one argument which is the IP address of the second party and should be launched as follows: "TALFIN <IP ADDRESS>"
+    //The RENELO chaterminal accept only one argument which is the IP address of the second party and should be launched as follows: "RENELO <IP ADDRESS>"
     if (argc!=2)
-        printf("Error arguments: TALFIN <IP ADDRESS>");
+        printf("Error arguments: RENELO <IP ADDRESS>");
 
-    //Step A: Trying to connect to the second party. ("ALLO Anyone on the line ?") Now when launching TALFIN there are 2 possibilities: the second party will be already live and listening so we should be able to directly connect OR the second party is not live so we will continue with Step B and start a listen socket
-    int fd_connect,stepA;
+    //Step A: Trying to connect to the second party. ("ALLO Anyone on the line ?") Now when launching RENELO there are 2 possibilities: the second party will be already live and listening so we should be able to directly connect OR the second party is not live so we will continue with Step B and start a listen socket
+    int fd_connect,fd_listen,fd_connection,stepA;
     fd_connect=socket(AF_INET,SOCK_STREAM,0);
     struct sockaddr_in connect_addr;
     connect_addr.sin_port=htons(PORT_NUM); //setting the port number of the connect address to the port number defined above
@@ -29,7 +45,6 @@ main (int argc, char **argv) {
     //Step B: In case step A fails we will start a listen socket 
     if (stepA!=0) {
         printf("Majnoun appears to be offline, starting mohiohio listening\n");
-        int fd_listen,fd_connection;
         struct sockaddr_in listen_addr,connection_addr;
         socklen_t clilen;
         fd_listen=socket(AF_INET,SOCK_STREAM,0);
@@ -45,12 +60,31 @@ main (int argc, char **argv) {
         clilen=sizeof(connection_addr);
         if ((fd_connection=accept(fd_listen,(struct sockaddr*) &connection_addr,&clilen))>=0) {
             printf("Majnoun connected to the line\n");
-            close(fd_listen);
+            
         }
     }
 
     if (stepA==0) {
         printf("Connected to Majnoun's Line\n");
     }
-    
+
+    /*Messaging system: The messaging system will be turned based, the party who will be acting as the server(opened the listening socket first) will be able to send a message first. It is important to know also that a maximum messaging time is set to 5 minutes. In case 5 minutes elapsed and the party did not send a message, then the turn will be reversed.
+    The following will be implemented with threads and a mutex lock.
+    */
+
+    for (;;) {
+        if (stepA!=0) {
+            printf("[ME]: ");
+            sendMessage(fd_connection);
+            printf("[MAJNOUN]: ");
+            recvMessage(fd_connection);
+        }
+        else {
+            printf("[MAJNOUN]: ");
+            recvMessage(fd_connect);
+            printf("[ME]: ");
+            sendMessage(fd_connect);
+        }
+    }
+
 }
