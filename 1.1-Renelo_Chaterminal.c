@@ -5,12 +5,33 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <termios.h>
+#include <fcntl.h>
+
 
 #define PORT_NUM 12345
 #define MAX_MESS 500
+struct termios oldt;
+
+void 
+blockTyping() {
+    //blocking typing in terminal
+    struct termios newt;
+    newt=oldt;
+
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO,TCSANOW,&newt);
+}
+
+void
+restoreTyping() {
+
+    tcsetattr(STDIN_FILENO,TCSANOW,&oldt);
+}
 
 void 
 sendMessage(int fd_socket) {
+    tcflush(STDIN_FILENO,TCIOFLUSH);
     char sendMessage[MAX_MESS];
     fgets(sendMessage,MAX_MESS,stdin);
     write(fd_socket,sendMessage,MAX_MESS);
@@ -38,9 +59,9 @@ main (int argc, char **argv) {
     connect_addr.sin_family=AF_INET; //setting the connect address to be IPv4
     inet_pton(AF_INET,argv[1],&connect_addr.sin_addr);
 
-  
-    stepA=connect(fd_connect,(struct sockaddr *) &connect_addr,sizeof(connect_addr));
     printf("Trying to connect to Majnoun\n");
+    stepA=connect(fd_connect,(struct sockaddr *) &connect_addr,sizeof(connect_addr));
+    
 
     //Step B: In case step A fails we will start a listen socket 
     if (stepA!=0) {
@@ -72,17 +93,23 @@ main (int argc, char **argv) {
     The following will be implemented with threads and a mutex lock.
     */
 
+    tcgetattr(STDIN_FILENO,&oldt);
+
     for (;;) {
         if (stepA!=0) {
             printf("[ME]: ");
             sendMessage(fd_connection);
+            blockTyping();
             printf("[MAJNOUN]: ");
             recvMessage(fd_connection);
+            restoreTyping();
         }
         else {
+            blockTyping();
             printf("[MAJNOUN]: ");
             recvMessage(fd_connect);
             printf("[ME]: ");
+            restoreTyping();
             sendMessage(fd_connect);
         }
     }
