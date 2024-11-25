@@ -9,7 +9,7 @@
 #include <fcntl.h>
 
 
-#define PORT_NUM 51461
+#define PORT_NUM 12345
 #define MAX_MESS 500
 struct termios oldt;
 
