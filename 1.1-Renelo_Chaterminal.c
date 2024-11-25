@@ -9,7 +9,7 @@
 #include <fcntl.h>
 
 
-#define PORT_NUM 12345
+#define PORT_NUM 51461
 #define MAX_MESS 500
 struct termios oldt;
 
@@ -31,7 +31,7 @@ restoreTyping() {
 
 void 
 sendMessage(int fd_socket) {
-    tcflush(STDIN_FILENO,TCIOFLUSH);
+    tcflush(STDIN_FILENO,TCIFLUSH);
     char sendMessage[MAX_MESS];
     fgets(sendMessage,MAX_MESS,stdin);
     write(fd_socket,sendMessage,MAX_MESS);
