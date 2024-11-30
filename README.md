@@ -1,6 +1,4 @@
-```html
-<img src="concept.webp" alt="Bear Head" width="300">
-```
+![Bear Head](concept.webp)
 # IPv6 Round-based Chaterminal
 
 With the adoption of IPv6 by most ISPs in the world, it is now possible to implement a true P2P communication. This chaterminal establish a direct TCP connection with any device assigned to a globally routable IPv6 address. This opens the possibilty of creating a fully decentralized chat application that doesn't rely on any middleman server such as STUN server or RELAY server. This is still a very simple round based chat where only 2 devices can chat together.  
