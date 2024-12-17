@@ -15,3 +15,5 @@ With the adoption of IPv6 by most ISPs in the world, it is now possible to imple
 ##  Future improvements
 - Encrypt messages.
 - Allow multi-user chat.
+
+  <meta name="google-site-verification" content="5taROc4A-Ts1NnnbmsO6p-anYcsdB6LXaBU8-5WObIc" />
